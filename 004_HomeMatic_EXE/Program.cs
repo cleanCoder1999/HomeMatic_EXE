@@ -3,6 +3,8 @@ using System.Text;
 
 using System.Net;
 using System.Net.Sockets;
+using SocketConnection;
+
 
 
 namespace HomeMatic_EXE
@@ -11,7 +13,30 @@ namespace HomeMatic_EXE
     {
         static void Main(string[] args)
         {
-           
+            
+            byte[] serverIpAddress = { 172, 17, 16, 3 };
+            byte[] clientIpAddress = { 172, 17, 16, 10 };
+
+            ServerInformation serverInfo = new ServerInformation(serverIpAddress, 80);
+            //ServerInformation serverInfo = new ServerInformation(serverIpAddress);
+
+            Client client = new Client(
+                                clientIpAddress,
+                                serverInfo.GetConstPort,
+                                serverInfo);
+
+            Console.WriteLine("before establishing connection");
+
+            
+            client.EstablishConnection();
+            Console.WriteLine("after establishing connection");
+
+            Console.WriteLine(client.ToString());
+            client.SendRequest("Hello");
+            Console.WriteLine("client.send");
+            string response = client.ReceiveResponse();
+            Console.WriteLine("true3");
+            client.ShutdownAndCloseConnection();
         }
     }
 }
@@ -22,6 +47,7 @@ namespace SocketConnection
     {
         private IPAddress ipAddress;
         private int port;
+        private const int constPort = 80;
 
         public ServerInformation(
                             byte[] ipAddress,
@@ -31,15 +57,35 @@ namespace SocketConnection
             this.port = port;
         }
 
-        public IPAddress getIpAddress()
+        public ServerInformation(byte[] ipAddress)
         {
-            return ipAddress;
+            this.ipAddress = new IPAddress(ipAddress);
         }
 
-        public int getPort()
+        public IPAddress GetIpAddress
         {
-            return port;
+            get
+            {
+                return ipAddress;
+            }
         }
+
+        public int GetConstPort
+        {
+            get
+            {
+                return constPort;
+            }
+        }
+
+        public int GetPort
+        {
+            get
+            {
+                return port;
+            }
+        }
+
     }
 
     class Client
@@ -47,7 +93,6 @@ namespace SocketConnection
         private IPAddress ipAddress;
         private int port;
         private ServerInformation serverInfo;
-
         private Socket client;
 
         public Client(
@@ -61,12 +106,43 @@ namespace SocketConnection
             this.serverInfo = serverInfo;
         }
 
+
         public void EstablishConnection()
         {
             CreateClientSocket();
 
-            client.Connect(serverInfo.getIpAddress(),
-                            serverInfo.getPort());
+            try
+            {
+                client.Connect(serverInfo.GetIpAddress, serverInfo.GetPort);
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (SocketException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
         }
         private void CreateClientSocket()
         {
@@ -76,21 +152,103 @@ namespace SocketConnection
                                 ProtocolType.Tcp);
         }
 
-        public bool sendRequest(string requestString)
+        /*
+        public bool sendAndCheckRequest(string request)
         {
-            byte[] encodedRequest = Encoding.ASCII.GetBytes(requestString);
-            int quantityOfSentBytes = client.Send(encodedRequest);
+            byte[] encodedRequest;
+            int quotaQuantityOfSentBytes = 0;
+            int actualQuantityOfSentBytes = 1;
 
-            return hasSameQuantityOfElements(
-                                encodedRequest.Length,
-                                quantityOfSentBytes);
+            try {
+                encodedRequest = Encoding.ASCII.GetBytes(request);
+
+                quotaQuantityOfSentBytes = encodedRequest.Length;
+                actualQuantityOfSentBytes = client.Send(encodedRequest);
+            } catch (Exception) {
+                throw;
+            }
+
+            return hasSameQuantity(
+                                quotaQuantityOfSentBytes,
+                                actualQuantityOfSentBytes);
         }
-        private bool hasSameQuantityOfElements(int sentBytes,
-                                int answeredBytes)
+        private bool hasSameQuantity(
+                                int quotaQuantity,
+                                int actualQuantity)
         {
-            return sentBytes == answeredBytes;
+            return quotaQuantity == actualQuantity;
+        }
+        */
+        public void SendRequest(string request)
+        {
+            try
+            {
+                byte[] encodedRequest = Encoding.ASCII.GetBytes(request);
+                client.Send(encodedRequest);
+
+            } catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (SocketException)
+            {
+                throw;
+            }
+            catch (ObjectDisposedException)
+            {
+                throw;
+            }
         }
 
-        /* ... */
+        public string ReceiveResponse()
+        {
+            byte[] encodedResponse = new byte[1024];
+            string response;
+
+            client.Receive(encodedResponse);
+            response = Encoding.ASCII.GetString(encodedResponse);
+
+            return response;
+        }
+        
+        public void ShutdownAndCloseConnection()
+        {
+            try
+            {
+                client.Shutdown(SocketShutdown.Both);
+            } catch (Exception)
+            {
+                throw;
+            }
+            client.Close();
+        }
+
+        override public string ToString()
+        { 
+            return "IP: " + ipAddress.ToString() + "\nPort: " + port + "\nclient.Connected: " + client.Connected;
+        }
     }
+
+    class HTTP_RequestCreator
+    {
+        private string completeHttpRequest;
+
+
+        private const string requestMethod = "GET";
+        private string uri;
+        private string httpVersion;
+
+        /*struct requestLine
+        {
+            private string eleme;
+        }*/       
+
+        private string CreateRequestLine()
+        {
+
+            return "";
+        }
+
+    }
+
 }
