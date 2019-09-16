@@ -8,7 +8,7 @@ namespace DescriptionProccessing
 {
     class PhysicalDevice
     {
-        private string name;
+        private string address;
         // Type des Geräts
         private string type;
         private List<Channel> channels;
@@ -18,7 +18,7 @@ namespace DescriptionProccessing
             channels = new List<Channel>();
         }
 
-        public string Name
+        public string Address
         {
             get;
             set;
@@ -33,10 +33,9 @@ namespace DescriptionProccessing
         {
             channels.Add(channel);
         }
-
         override public string ToString()
         {
-            return "Name:_" + name
+            return "Name:_" + address
                     + "\nType: " + type
                     + "\nChannels: " + channels.ToString();
         }
@@ -45,10 +44,16 @@ namespace DescriptionProccessing
 
     class Channel
     {
-        private string name;
+        private string id;
         private string direction;
+        private List<DataPoint> ListOfDataPoints;
 
-        public string Name
+        Channel()
+        {
+            ListOfDataPoints = new List<DataPoint>();
+        }
+
+        public string Id
         {
             get;
             set;
@@ -58,6 +63,33 @@ namespace DescriptionProccessing
             get;
             set;
         }
+        public List<DataPoint> DataPoints
+        {
+            get;
+            set;
+        }
+
+        public void addDataPoint(DataPoint dataPoint)
+        {
+            ListOfDataPoints.Add(dataPoint);
+        }
+
+    }
+
+    class DataPoint
+    {
+        private string name;
+        private int id;
+        private string value;
+        private int valueType;
+        private string valueUnit;
+        private string timestamp;
+
+        /*
+         * 
+         * 
+         */
+
     }
 
     class DeviceProcessor
@@ -125,7 +157,7 @@ namespace DescriptionProccessing
         {
             PhysicalDevice physicalDevice = new PhysicalDevice();
 
-            physicalDevice.Name = deviceDescription.Address;
+            physicalDevice.Address = deviceDescription.Address;
             physicalDevice.Type = deviceDescription.Type;
 
             this.physicalDevice = physicalDevice;
@@ -160,7 +192,7 @@ namespace DescriptionProccessing
             {
                 if (deviceDescription.IsChannel())
                 {
-                    channel.Name = deviceDescription.Address;
+                    channel.Id = deviceDescription.Address;
                     channel.Direction = deviceDescription.GetCategory();
                     physicalDevice.AddChannel(channel);
                     // remove after usage
