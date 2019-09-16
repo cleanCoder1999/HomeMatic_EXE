@@ -33,9 +33,9 @@ namespace DescriptionProccessing
         {
             channels.Add(channel);
         }
-        override public string ToString()
+        public string ToString()
         {
-            return "Name:_" + address
+            return "Address: " + address
                     + "\nType: " + type
                     + "\nChannels: " + channels.ToString();
         }
@@ -48,7 +48,7 @@ namespace DescriptionProccessing
         private string direction;
         private List<DataPoint> ListOfDataPoints;
 
-        Channel()
+        public Channel()
         {
             ListOfDataPoints = new List<DataPoint>();
         }
@@ -127,6 +127,7 @@ namespace DescriptionProccessing
             listOfPhysicalDevices = new List<PhysicalDevice>();
         }
 
+        /*
         public void convert(DeviceDescription[] fieldOfDeviceDescriptions)
         {
             createListOfDeviceDescriptions(fieldOfDeviceDescriptions);
@@ -145,6 +146,35 @@ namespace DescriptionProccessing
 
                 addPhysicalDeviceToList();
             }
+        }*/
+        public void Convert(DeviceDescription[] fieldOfDeviceDescriptions)
+        {
+            createListOfDeviceDescriptions(fieldOfDeviceDescriptions);
+            Console.WriteLine("created list");
+            int i = 0;
+
+            while (i < listOfDeviceDescriptions.Count)
+            {
+                ++i;
+
+                CreatePhysicalDeviceOutOf(listOfDeviceDescriptions[0]);
+                //Console.WriteLine(i + ": created physical device");
+                Console.WriteLine(i + ": physical device: " + physicalDevice.Address);
+                //Console.WriteLine(i + ": physical device: " + physicalDevice.Type);
+
+                listOfDeviceDescriptions.RemoveAt(0);
+                //Console.WriteLine(i + ": removed element");
+
+                AddChannelsToPhysicalDevice();
+                //Console.WriteLine(i + ": added channels");
+                Console.WriteLine(i + ": physical device: " + physicalDevice.Address + "\n" + physicalDevice.ToString());
+
+                AddPhysicalDeviceToList();
+                Console.WriteLine(i + "list member: " + listOfPhysicalDevices[0].Address);
+            }
+
+            Console.WriteLine("ListOfPhysicalDevices has " + listOfPhysicalDevices.Count + " members");
+
         }
         private void createListOfDeviceDescriptions(DeviceDescription[] fieldOfDeviceDescriptions)
         {
@@ -153,7 +183,7 @@ namespace DescriptionProccessing
                 listOfDeviceDescriptions.Add(deviceDescription);
             }
         }
-        private void createPhysicalDeviceOutOf(DeviceDescription deviceDescription)
+        private void CreatePhysicalDeviceOutOf(DeviceDescription deviceDescription)
         {
             PhysicalDevice physicalDevice = new PhysicalDevice();
 
@@ -179,30 +209,31 @@ namespace DescriptionProccessing
                 }
                 else
                     break;
-            }
-            // assign shrunk list
-            this.listOfDeviceDescriptions = listOfDeviceDescriptions;             
+            }      
         }
         */
-        private void addChannelsToPhysicalDevice()
+        private void AddChannelsToPhysicalDevice()
         {
             Channel channel = new Channel();
+            int i = 0;
 
-            foreach (DeviceDescription deviceDescription in listOfDeviceDescriptions)
+            while (i < listOfDeviceDescriptions.Count)
             {
-                if (deviceDescription.IsChannel())
+                ++i;
+
+                if (listOfDeviceDescriptions[0].IsChannel())
                 {
-                    channel.Id = deviceDescription.Address;
-                    channel.Direction = deviceDescription.GetCategory();
+                    channel.Id = listOfDeviceDescriptions[0].Address;
+                    channel.Direction = listOfDeviceDescriptions[0].GetCategory();
                     physicalDevice.AddChannel(channel);
                     // remove after usage
-                    listOfDeviceDescriptions.Remove(deviceDescription);
+                    listOfDeviceDescriptions.RemoveAt(0);
                 }
                 else
                     break;
             }
         }
-        private void addPhysicalDeviceToList()
+        private void AddPhysicalDeviceToList()
         {
             listOfPhysicalDevices.Add(physicalDevice);
         }

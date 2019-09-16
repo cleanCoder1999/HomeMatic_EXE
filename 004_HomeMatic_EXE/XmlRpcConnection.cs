@@ -12,6 +12,7 @@ namespace XmlRpcConnection
     /// proxy interface for HomeMatic
     /// </summary>
     //[XmlRpcUrl("http://192.168.0.106:2001/")]
+    [XmlRpcUrl("http://192.168.0.102:2001/")]
     public interface IHomeMaticProxy : IXmlRpcProxy
     {
         /// <summary>

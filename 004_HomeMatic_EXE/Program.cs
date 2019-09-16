@@ -53,9 +53,9 @@ namespace HomeMatic_EXE
             Console.WriteLine("read devices");
             DeviceDescription[] devices = proxy.ListDevices();
 
-            /*
-            Console.WriteLine("output devices");
             
+            Console.WriteLine("output devices");
+            /*
             foreach (DeviceDescription singleDevice in devices)
             {
                 Console.WriteLine(singleDevice.ToString());
@@ -68,12 +68,17 @@ namespace HomeMatic_EXE
             Console.WriteLine(devices[1].Address);
             Console.WriteLine(devices[1].IsChannel());
             Console.WriteLine(devices[1].ParentType);
+
+            Console.WriteLine(devices[2].Address);
+            Console.WriteLine(devices[2].IsChannel());
+            Console.WriteLine(devices[2].ParentType);
             */
 
             DeviceProcessor dp = new DeviceProcessor();
-            dp.convert(devices);
+            dp.Convert(devices);
 
-            List<PhysicalDevice> list = dp.ListOfPhysicalDevices;
+            List<PhysicalDevice> list = new List<PhysicalDevice>();
+            list = dp.ListOfPhysicalDevices;
 
             foreach (PhysicalDevice device in list)
             {
