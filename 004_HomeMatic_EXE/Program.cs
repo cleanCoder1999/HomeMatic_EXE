@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using SocketConnection;
 
 using CookComputing.XmlRpc;
-using XmlRpcConnection;
+using HomeMatic;
 
 using System.Collections.Generic;
 using DescriptionProccessing;
@@ -42,19 +42,22 @@ namespace HomeMatic_EXE
             string response = client.ReceiveResponse();
             Console.WriteLine("true3");
             client.ShutdownAndCloseConnection();
-            */
+            
 
             Console.WriteLine("before PROXY creation");
             IHomeMaticProxy proxy = XmlRpcProxyGen.Create<IHomeMaticProxy>();
             Console.WriteLine("after PROXY creation");
 
-            
-
             Console.WriteLine("read devices");
             DeviceDescription[] devices = proxy.ListDevices();
 
-            
-            Console.WriteLine("output devices");
+            Console.WriteLine("Ping(): " + proxy.Ping("http://172.16.17.3:2001"));
+*/
+            //HomeMaticHandler handler = new HomeMaticHandler("http://172.16.17.3:2001");
+
+            //DeviceDescription[] deviceDescriptions = handler.GetDeviceDescriptions();
+
+            //Console.WriteLine("output devices");
             /*
             foreach (DeviceDescription singleDevice in devices)
             {
@@ -72,18 +75,57 @@ namespace HomeMatic_EXE
             Console.WriteLine(devices[2].Address);
             Console.WriteLine(devices[2].IsChannel());
             Console.WriteLine(devices[2].ParentType);
-            */
+            
 
-            DeviceProcessor dp = new DeviceProcessor();
-            dp.Convert(devices);
+            DeviceDescriptionProcessor dp = new DeviceDescriptionProcessor();
+            //dp.Convert(deviceDescriptions);
 
             List<PhysicalDevice> list = new List<PhysicalDevice>();
             list = dp.ListOfPhysicalDevices;
 
-            foreach (PhysicalDevice device in list)
+            Console.WriteLine(list[0]);
+            */
+            /*foreach (PhysicalDevice device in list)
             {
-                Console.WriteLine(device.ToString());
+                Console.WriteLine(device.ToString);
+            }*/
+
+            HomeMaticHandler BidCos_Handler = new HomeMaticHandler();
+            HomeMaticHandler HmIP_Handler = new HomeMaticHandler();
+
+
+            BidCos_Handler.SetUrl("http://172.16.17.28");
+            BidCos_Handler.SetPort(2001);
+            BidCos_Handler.Start();
+
+            HmIP_Handler.SetUrl("http://172.16.17.28");
+            HmIP_Handler.SetPort(2010);
+            HmIP_Handler.Start();
+
+            string[] BidCos_Handler_addresses = BidCos_Handler.GetAnyDistinctAddress();
+            int i = 0;
+            foreach (string address in BidCos_Handler_addresses)
+            {
+                ++i;
+                Console.WriteLine(i + ": " + address);
+                Console.WriteLine("----------------------");
             }
+
+            string[] HmIP_Handler_addresses = HmIP_Handler.GetAnyDistinctAddress();
+            i = 0;
+            foreach (string address in HmIP_Handler_addresses)
+            {
+                ++i;
+                Console.WriteLine(i + ": " + address);
+                Console.WriteLine("----------------------");
+            }
+            Actuator actuator = new Actuator(BidCos_Handler.getProxy());
+            actuator.SetAddress("NEQ0184037");
+            actuator.SetChannel("3");
+            actuator.SetDataPoint("RAMP_TIME");
+            var  power = actuator.GetValue();
+            Console.WriteLine("power: " + power);
+            Console.WriteLine("power: " + power);
 
         }
     }

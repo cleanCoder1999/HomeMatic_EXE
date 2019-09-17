@@ -1,6 +1,6 @@
 ﻿using CookComputing.XmlRpc;
 
-namespace XmlRpcConnection
+namespace HomeMatic
 {
     /*
      * 
@@ -11,8 +11,7 @@ namespace XmlRpcConnection
     /// <summary>
     /// proxy interface for HomeMatic
     /// </summary>
-    //[XmlRpcUrl("http://192.168.0.106:2001/")]
-    [XmlRpcUrl("http://192.168.0.102:2001/")]
+    //[XmlRpcUrl("http://172.16.17.3:2001/")]
     public interface IHomeMaticProxy : IXmlRpcProxy
     {
         /// <summary>
@@ -42,6 +41,16 @@ namespace XmlRpcConnection
         // method called setValue will be executed via XML-RPC communication
         [XmlRpcMethod("setValue")]
         void SetValue(string address, string valueKey, object value);
+
+        /// <summary>
+        /// sends a request to the HomeMatic device
+        /// </summary>
+        /// <param name="callerId"></param>
+        /// <returns>true --> HomeMatic ON
+        ///          false --> HomeMatic OFF</returns>
+        [XmlRpcMethod("ping")]
+        bool Ping(string callerId);
+
     }
 
 

@@ -1,7 +1,7 @@
 ﻿using System;
 
 using System.Collections.Generic;
-using XmlRpcConnection;
+using HomeMatic;
 
 
 namespace DescriptionProccessing
@@ -33,13 +33,15 @@ namespace DescriptionProccessing
         {
             channels.Add(channel);
         }
-        public string ToString()
+        public string ToString
         {
-            return "Address: " + address
-                    + "\nType: " + type
-                    + "\nChannels: " + channels.ToString();
+            get
+            {
+                return "Address: " + address
+                        + "\nType: " + type
+                        + "\nChannels: " + channels.ToString();
+            }
         }
-
     }
 
     class Channel
@@ -92,7 +94,7 @@ namespace DescriptionProccessing
 
     }
 
-    class DeviceProcessor
+    class DeviceDescriptionProcessor
     {
         private PhysicalDevice physicalDevice;
         private List<PhysicalDevice> listOfPhysicalDevices;
@@ -104,23 +106,8 @@ namespace DescriptionProccessing
             this.deviceDescriptions = deviceDescriptions;
         }
         */
-        /*
-    public void addPhysicalDevices()
-    {
-        PhysicalDevice physicalDevice;
 
-        foreach(DeviceDescription deviceDescription in fieldOfDeviceDescriptions)
-        {
-            if (deviceDescription.IsDevice())
-            {
-                //physicalDevice = createPhysicalDeviceOutOf(deviceDescription);
-                //listOfPhysicalDevices.Add(physicalDevice);
-            }
-        }
-    }
-    */
-
-        public DeviceProcessor()
+        public DeviceDescriptionProcessor()
         {
             listOfDeviceDescriptions = new List<DeviceDescription>();
             physicalDevice = new PhysicalDevice();
@@ -157,23 +144,24 @@ namespace DescriptionProccessing
             {
                 ++i;
 
-                CreatePhysicalDeviceOutOf(listOfDeviceDescriptions[0]);
+                physicalDevice = CreatePhysicalDeviceOutOf(listOfDeviceDescriptions[0]);
                 //Console.WriteLine(i + ": created physical device");
-                Console.WriteLine(i + ": physical device: " + physicalDevice.Address);
-                //Console.WriteLine(i + ": physical device: " + physicalDevice.Type);
 
                 listOfDeviceDescriptions.RemoveAt(0);
                 //Console.WriteLine(i + ": removed element");
 
                 AddChannelsToPhysicalDevice();
                 //Console.WriteLine(i + ": added channels");
-                Console.WriteLine(i + ": physical device: " + physicalDevice.Address + "\n" + physicalDevice.ToString());
-
-                AddPhysicalDeviceToList();
-                Console.WriteLine(i + "list member: " + listOfPhysicalDevices[0].Address);
+               
+                //AddPhysicalDeviceToList();
+                AddPhysicalDeviceToList(physicalDevice);
+                
             }
 
             Console.WriteLine("ListOfPhysicalDevices has " + listOfPhysicalDevices.Count + " members");
+            Console.WriteLine("listOfPhysicalDevices[0]: " + listOfPhysicalDevices[0].Address);
+            Console.WriteLine("listOfPhysicalDevices[8]: " + listOfPhysicalDevices[8].Address);
+            //Console.WriteLine("listOfPhysicalDevices[last]: " + ListOfPhysicalDevices[listOfPhysicalDevices.Count -2].Address);
 
         }
         private void createListOfDeviceDescriptions(DeviceDescription[] fieldOfDeviceDescriptions)
@@ -183,14 +171,15 @@ namespace DescriptionProccessing
                 listOfDeviceDescriptions.Add(deviceDescription);
             }
         }
-        private void CreatePhysicalDeviceOutOf(DeviceDescription deviceDescription)
+        private PhysicalDevice CreatePhysicalDeviceOutOf(DeviceDescription deviceDescription)
         {
             PhysicalDevice physicalDevice = new PhysicalDevice();
 
             physicalDevice.Address = deviceDescription.Address;
             physicalDevice.Type = deviceDescription.Type;
 
-            this.physicalDevice = physicalDevice;
+            //this.physicalDevice = physicalDevice;
+            return physicalDevice;
         }
         /*
         private void addChannelsFrom(List<DeviceDescription> listOfDeviceDescriptions)
@@ -233,7 +222,13 @@ namespace DescriptionProccessing
                     break;
             }
         }
+        /*
         private void AddPhysicalDeviceToList()
+        {
+            listOfPhysicalDevices.Add(physicalDevice);
+        }
+        */
+        private void AddPhysicalDeviceToList(PhysicalDevice physicalDevice)
         {
             listOfPhysicalDevices.Add(physicalDevice);
         }

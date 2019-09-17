@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actuator.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="DescriptionProcessing.cs" />
+    <Compile Include="HomeMaticHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlRpcConnection.cs" />
